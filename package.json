@@ -4,14 +4,11 @@
   "description": "A web crawler to gather home prices and housing market info",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js"
   },
   "author": "Austin Ottinger",
-  "license": "ISC",
+  "license": "GNU GPLv3",
   "dependencies": {
-    "cheerio": "^1.0.0-rc.3",
-    "puppeteer": "^2.1.1",
-    "request": "^2.88.0",
-    "request-promise": "^4.2.5"
+    "puppeteer": "^2.1.1"
   }
 }
