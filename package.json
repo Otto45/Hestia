@@ -9,6 +9,7 @@
   "author": "Austin Ottinger",
   "license": "GNU GPLv3",
   "dependencies": {
+    "awilix": "^4.2.5",
     "puppeteer": "^2.1.1"
   }
 }
