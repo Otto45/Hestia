@@ -13,15 +13,16 @@ class Zillow extends Scraper {
     }
 
     async _scrapeHomeInfoFromPage(page) {
+        const self = this;
         await page.$$eval('article.list-card', articles => {
             return articles.map(article => {
                 const address = article.querySelector('address.list-card-addr');
                 const price = article.querySelector('div.list-card-price');
 
-                this.homeInfo.push({
-                    address: address.textContent,
-                    price: price.textContent
-                });
+                // self.homeInfo.push({
+                //     address: address.textContent,
+                //     price: price.textContent
+                // });
 
                 console.log(JSON.stringify({
                     address: address.textContent,

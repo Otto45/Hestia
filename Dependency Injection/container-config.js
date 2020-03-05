@@ -2,6 +2,9 @@ const awilix = require('awilix');
 const { asValue, asFunction, asClass, Lifetime } = awilix;
 const puppeteer = require('puppeteer');
 
+const HumanSimulator = require('../human-simulator');
+const Zillow = require('../zillow');
+
 // TODO: Get many user agent strings and rotate them
 const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.0 Safari/537.36';
 const HEADERS = {
@@ -14,20 +17,29 @@ const HEADERS = {
 };
 
 const container = awilix.createContainer();
+let browser = null;
 
-container.register({
-    browser: asFunction(async () => { return await puppeteer.launch({ headless: false }) })
-        .singleton()
-        .disposer(async browser => await browser.close()),
-    userAgent: asValue(USER_AGENT)
-        .singleton(),
-    headers: asValue(HEADERS)
-        .singleton()
-});
+async function configureContainer() {
+    browser = await puppeteer.launch({ headless: false });
 
-container.loadModules([
-    ['../human-simulator.js', { formatName: () => { return 'humanSimulator' }, lifetime: Lifetime.SINGLETON }],
-    '../zillow.js'
-]);
+    container.register({
+        browser: asValue(browser),
+        userAgent: asValue(USER_AGENT),
+        headers: asValue(HEADERS),
+        humanSimulator: asClass(HumanSimulator)
+            .singleton(),
+        zillow: asClass(Zillow)
+    });
 
-module.exports = container;
+    return container;
+}
+
+async function disposeContainer() {
+    await container.dispose();
+
+    if (browser !== null) {
+        await browser.close();
+    }
+}
+
+module.exports = { configureContainer, disposeContainer };
