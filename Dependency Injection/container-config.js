@@ -1,5 +1,5 @@
 const awilix = require('awilix');
-const { asValue, asFunction, asClass, Lifetime } = awilix;
+const { asValue, asClass } = awilix;
 const puppeteer = require('puppeteer');
 
 const HumanSimulator = require('../human-simulator');
@@ -20,7 +20,7 @@ const container = awilix.createContainer();
 let browser = null;
 
 async function configureContainer() {
-    browser = await puppeteer.launch({ headless: false });
+    browser = await puppeteer.launch({ headless: false,  slowMo: 200});
 
     container.register({
         browser: asValue(browser),

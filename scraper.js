@@ -1,6 +1,6 @@
 // abstract class
 class Scraper {
-    constructor({ browser, userAgent, headers, humanSimulator }) {
+    constructor(browser, userAgent, headers, humanSimulator) {
         // private
         this._browser = browser;
         this._userAgent = userAgent;
@@ -8,16 +8,14 @@ class Scraper {
 
         // protected
         this._humanSimulator = humanSimulator;
-
-        // public
-        this.homeInfo = [];
     }
 
+    // protected fields
+    _nextPageQuerySelector;
+    _homeInfo = [];
+
     // abstract protected methods
-    async _searchForListOfHomes(page, url) { }
-    async _searchHasResults(page) { }
     async _scrapeHomeInfoFromPage(page) { }
-    async _searchResultsHasNextPage(page) { }
     async _navigateToNextPage(page) { }
 
     // protected methods
@@ -29,26 +27,31 @@ class Scraper {
         return page;
     }
 
+    async _searchForHomes(page) { } // Some scrapers will not need to override this,
+                                    // as a site's base URL can include the city (e.g. Zillow scrapers)
+
     // public methods
     async searchForHomes(url) {
+        // TODO: Parallelize with browsers, not pages
         const page = await this._createNewPage();
+        await page.goto(url, { waitUntil: 'networkidle0' });
 
-        await this._searchForListOfHomes(page, url);
+        await this._searchForHomes(page);
+        console.log('Search complete.');
 
-        if (!(await this._searchHasResults(page))) {
-            return;
+        let searchResultsHasNextPage = false;
+
+        do {
+            searchResultsHasNextPage = await this._scrapeHomeInfoFromPage(page);
         }
-
-        await this._scrapeHomeInfoFromPage(page);
-
-        while (await this._searchResultsHasNextPage(page)) {
+        while (searchResultsHasNextPage) {
             await this._navigateToNextPage(page);
-            await this._scrapeHomeInfoFromPage(page);
+            searchResultsHasNextPage = await this._scrapeHomeInfoFromPage(page);
         }
     }
 
     getScrapedHomeInfo() {
-        return this.homeInfo;
+        return this._homeInfo;
     }
 }
 

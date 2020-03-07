@@ -2,46 +2,45 @@ const Scraper = require('./scraper');
 
 class Zillow extends Scraper {
 
+    // protected fields
+    _nextPageQuerySelector = 'li.zsg-pagination-next > a';
+
     // overridden protected methods
-    async _searchForListOfHomes(page, url) {
-        await page.goto(url);
-        await page.waitForSelector('article.list-card');
-    }
-
-    async _searchHasResults(page) {
-        return (await page.$('div.list-card-price')) != null;
-    }
-
     async _scrapeHomeInfoFromPage(page) {
-        const self = this;
-        await page.$$eval('article.list-card', articles => {
-            return articles.map(article => {
-                const address = article.querySelector('address.list-card-addr');
-                const price = article.querySelector('div.list-card-price');
-
-                // self.homeInfo.push({
-                //     address: address.textContent,
-                //     price: price.textContent
-                // });
-
-                console.log(JSON.stringify({
-                    address: address.textContent,
-                    price: price.textContent
-                }));
-            });
+        console.log('Begin scraping...');
+        
+        await page.evaluate(() => {
+            // TODO: Move all web-scraping work in here
+            // NOTE: All code inside this function executes in the browser, not Node.js
         });
-    }
 
-    async _searchResultsHasNextPage(page) {
-        return (await page.$('li.zsg-pagination-next > a')) != null;
+        // await page.$$eval('article.list-card', articles => {
+
+        //     const address = article.querySelector('address.list-card-addr');
+        //     const price = article.querySelector('div.list-card-price');
+
+        //     self.homeInfo.push({
+        //         address: address.textContent,
+        //         price: price.textContent
+        //     });
+
+        //     console.log(JSON.stringify({
+        //         address: address.textContent,
+        //         price: price.textContent
+        //     }));
+
+        // });
+
+        return (await page.$(this._nextPageQuerySelector)) != null;
     }
 
     async _navigateToNextPage(page) {
-        // Randomize time before actually navigating
-        // Randomize click time
+        console.log('Navigating to next page.');
+        // TODO: Randomize time before actually navigating
+        // TODO: Randomize click time
         await Promise.all([
-            page.waitForNavigation(),
-            page.click('li.zsg-pagination-next > a')
+            page.waitForNavigation({ waitUntil: 'networkidle0' }),
+            page.click(this._nextPageQuerySelector)
         ]);
     }
 }
