@@ -1,10 +1,11 @@
 // abstract class
 class Scraper {
-    constructor(browser, userAgent, headers, humanSimulator) {
+    constructor({browser, userAgent, headers, homeInfoRepositoryBase, humanSimulator}) {
         // private
         this._browser = browser;
         this._userAgent = userAgent;
         this._headers = headers;
+        this._homeInfoRepositoryBase = homeInfoRepositoryBase;
 
         // protected
         this._humanSimulator = humanSimulator;
@@ -33,25 +34,24 @@ class Scraper {
     // public methods
     async searchForHomes(url) {
         // TODO: Parallelize with browsers, not pages
+        // NOTE: Each unique website should really be scraped with its own docker container, running this code,
+        // to ensure that browser cached data, leaked memory, zombie procs, etc. don't bleed into scrapers for other sites
+
         const page = await this._createNewPage();
         await page.goto(url, { waitUntil: 'networkidle0' });
 
         await this._searchForHomes(page);
-        console.log('Search complete.');
 
-        let searchResultsHasNextPage = false;
+        let searchResultsHasNextPage = await this._scrapeHomeInfoFromPage(page);
 
-        do {
-            searchResultsHasNextPage = await this._scrapeHomeInfoFromPage(page);
-        }
         while (searchResultsHasNextPage) {
             await this._navigateToNextPage(page);
             searchResultsHasNextPage = await this._scrapeHomeInfoFromPage(page);
         }
-    }
 
-    getScrapedHomeInfo() {
-        return this._homeInfo;
+        if (this._homeInfo.length > 0) {
+            this._homeInfoRepositoryBase.saveHomeInfo(this._homeInfo);
+        }
     }
 }
 
