@@ -22,7 +22,7 @@ const container = awilix.createContainer();
 let browser;
 
 async function configureContainer() {
-    browser = await puppeteer.launch({ headless: false,  slowMo: 200});
+    browser = await puppeteer.launch({ headless: true,  slowMo: 200});
 
     container.register({
         browser: asValue(browser),
