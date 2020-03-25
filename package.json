@@ -2,9 +2,9 @@
   "name": "hestia",
   "version": "1.0.0",
   "description": "A web crawler to gather home prices and housing market info",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node ."
   },
   "author": "Austin Ottinger",
   "license": "GNU GPLv3",

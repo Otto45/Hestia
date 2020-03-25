@@ -2,9 +2,10 @@ const awilix = require('awilix');
 const { asValue, asClass } = awilix;
 const puppeteer = require('puppeteer');
 
-const HumanSimulator = require('../human-simulator');
-const Zillow = require('../zillow');
-const HomeInfoRepositoryConsole = require('../home-info-repository-console');
+const HumanSimulator = require('../Util/human-simulator');
+const Zillow = require('../Scrapers/scraper');
+const HomeInfoRepositoryConsole = require('../Repository Layer/home-info-repository-console');
+const HomeInfoRepositoryMysql = require('../Repository Layer/home-info-repository-mysql');
 
 // TODO: Get many user agent strings and rotate them
 const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.0 Safari/537.36';
@@ -22,14 +23,16 @@ const container = awilix.createContainer();
 let browser;
 
 async function configureContainer() {
-    browser = await puppeteer.launch({ headless: true,  slowMo: 200});
+    browser = await puppeteer.launch({ headless: false, slowMo: 200 });
 
     container.register({
         browser: asValue(browser),
         userAgent: asValue(USER_AGENT),
         headers: asValue(HEADERS),
         humanSimulator: asClass(HumanSimulator).singleton(),
-        homeInfoRepositoryBase: asClass(HomeInfoRepositoryConsole).singleton(), // TODO: Swap this out with real repo based on config
+        homeInfoRepositoryBase: process.env.NODE_ENV === 'production'
+            ? asClass(HomeInfoRepositoryMysql).singleton()
+            : asClass(HomeInfoRepositoryConsole).singleton(),
         zillow: asClass(Zillow)
     });
 

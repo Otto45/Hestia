@@ -7,10 +7,10 @@ class Zillow extends Scraper {
 
     // overridden protected methods
     async _scrapeHomeInfoFromPage(page) {
-        // NOTE: All code inside this function executes in the browser, not Node.js
-        const homeInfo = await page.evaluate(() => {
+        // NOTE: All code inside evaluate() executes in the browser, not Node.js
+        this._homeInfo.push(await page.evaluate(() => {
             let homeInfo = [];
-            debugger;
+
             const homeElements = document.querySelectorAll('article.list-card');
             homeElements.forEach(homeElement => {
                 const address = homeElement.querySelector('address.list-card-addr');
@@ -23,16 +23,19 @@ class Zillow extends Scraper {
             });
 
             return homeInfo;
-        });
+        }));
 
-        this._homeInfo.push(homeInfo);
+        // TODO: Need to perform some human like actions, to make it appear a person is looking through listings
+        // This will take a lot more time to scrape every page, but hopefully will stop a recaptcha from appearing
+        // E.g. Use methods on puppeteer page object to scroll page if scrollable, and maybe navigate to random home detail pages
+        // with a delay before closing, to simulate looking at them
 
         return (await page.$(this._nextPageQuerySelector)) != null;
     }
 
     async _navigateToNextPage(page) {
-        // TODO: Randomize time before actually navigating
-        // TODO: Randomize click time
+
+        let clickElementOnPagePromise = this._humanSimulator.clickElementOnPage(page, this._nextPageQuerySelector);
         await Promise.all([
             page.waitForNavigation({ waitUntil: 'networkidle0' }),
             page.click(this._nextPageQuerySelector)

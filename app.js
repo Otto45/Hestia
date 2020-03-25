@@ -4,7 +4,7 @@ const scraperRegistry = require('./scraper-registry');
 // TODO: Dockerize this to contain all chromium, Node.js, and npm packages for this app !!!
 
 (async () => {
-    try{
+    try {
         var container = await configureContainer();
         const scraperPromises = [];
 
@@ -18,7 +18,7 @@ const scraperRegistry = require('./scraper-registry');
         await disposeContainer();
 
     } catch (err) {
-        console.log('Catching Error:');
         console.log(err);
+        // TODO: Implement app level logger to be injected
     }
 })();

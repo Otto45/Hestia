@@ -1,4 +1,4 @@
-const NotImplementedError = require('./Custom Errors/NotImplementedError');
+const NotImplementedError = require('../Custom Errors/NotImplementedError');
 
 // abstract class
 class HomeInfoRepositoryBase {
