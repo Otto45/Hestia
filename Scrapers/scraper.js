@@ -55,6 +55,7 @@ class Scraper {
         } catch(err) {
             // TODO: See if error was due to a recaptcha appearing, come up with retry plan for that case
             // Otherwise, throw error up call stack
+            console.log(err);
         }
     }
 }

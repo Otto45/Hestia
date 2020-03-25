@@ -3,7 +3,7 @@ const { asValue, asClass } = awilix;
 const puppeteer = require('puppeteer');
 
 const HumanSimulator = require('../Util/human-simulator');
-const Zillow = require('../Scrapers/scraper');
+const Zillow = require('../Scrapers/zillow');
 const HomeInfoRepositoryConsole = require('../Repository Layer/home-info-repository-console');
 const HomeInfoRepositoryMysql = require('../Repository Layer/home-info-repository-mysql');
 

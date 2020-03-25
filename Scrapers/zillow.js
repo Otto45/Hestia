@@ -8,8 +8,9 @@ class Zillow extends Scraper {
     // overridden protected methods
     async _scrapeHomeInfoFromPage(page) {
         // NOTE: All code inside evaluate() executes in the browser, not Node.js
+
         this._homeInfo.push(await page.evaluate(() => {
-            let homeInfo = [];
+            const homeInfo = [];
 
             const homeElements = document.querySelectorAll('article.list-card');
             homeElements.forEach(homeElement => {
@@ -34,11 +35,9 @@ class Zillow extends Scraper {
     }
 
     async _navigateToNextPage(page) {
-
-        let clickElementOnPagePromise = this._humanSimulator.clickElementOnPage(page, this._nextPageQuerySelector);
         await Promise.all([
             page.waitForNavigation({ waitUntil: 'networkidle0' }),
-            page.click(this._nextPageQuerySelector)
+            this._humanSimulator.clickElementOnPage(page, this._nextPageQuerySelector)
         ]);
     }
 }
