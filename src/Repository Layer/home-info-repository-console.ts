@@ -7,4 +7,4 @@ class HomeInfoRepositoryConsole extends HomeInfoRepositoryBase {
     }
 }
 
-module.exports = HomeInfoRepositoryConsole;
+export default HomeInfoRepositoryConsole;

@@ -4,12 +4,19 @@
   "description": "A web crawler to gather home prices and housing market info",
   "main": "app.js",
   "scripts": {
-    "start": "node ."
+    "start": "npm run build && npm run serve",
+    "build": "./node_modules/typescript/bin/tsc",
+    "serve": "node dist/app.js"
   },
   "author": "Austin Ottinger",
   "license": "GNU GPLv3",
   "dependencies": {
     "awilix": "^4.2.5",
     "puppeteer": "^2.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^13.9.5",
+    "@types/puppeteer": "^2.0.1",
+    "typescript": "^3.8.3"
   }
 }

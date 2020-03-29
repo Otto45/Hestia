@@ -5,4 +5,4 @@ class HomeInfoRepositoryMysql extends HomeInfoRepositoryBase {
     
 }
 
-module.exports = HomeInfoRepositoryMysql;
+export default HomeInfoRepositoryMysql;

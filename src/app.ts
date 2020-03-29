@@ -1,5 +1,5 @@
-const { configureContainer, disposeContainer } = require('./Dependency Injection/container-config');
-const scraperRegistry = require('./scraper-registry');
+import { configureContainer, disposeContainer } from './Dependency Injection/container-config';
+import scraperRegistry from './scraper-registry';
 
 // TODO: Dockerize this to contain all chromium, Node.js, and npm packages for this app !!!
 

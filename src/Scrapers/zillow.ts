@@ -1,4 +1,5 @@
-const Scraper = require('./scraper');
+import Scraper from './scraper';
+import { Page } from 'puppeteer';
 
 class Zillow extends Scraper {
 
@@ -6,11 +7,11 @@ class Zillow extends Scraper {
     _nextPageQuerySelector = 'li.zsg-pagination-next > a';
 
     // overridden protected methods
-    async _scrapeHomeInfoFromPage(page) {
+    async _scrapeHomeInfoFromPage(page: Page) {
         // NOTE: All code inside evaluate() executes in the browser, not Node.js
 
-        this._homeInfo.push(await page.evaluate(() => {
-            const homeInfo = [];
+        this.homeInfo.push(await page.evaluate(() => {
+            const homeInfo: any = [];
 
             const homeElements = document.querySelectorAll('article.list-card');
             homeElements.forEach(homeElement => {
@@ -34,12 +35,12 @@ class Zillow extends Scraper {
         return (await page.$(this._nextPageQuerySelector)) != null;
     }
 
-    async _navigateToNextPage(page) {
+    async _navigateToNextPage(page: Page) {
         await Promise.all([
             page.waitForNavigation({ waitUntil: 'networkidle0' }),
-            this._humanSimulator.clickElementOnPage(page, this._nextPageQuerySelector)
+            this.humanSimulator.clickElementOnPage(page, this._nextPageQuerySelector)
         ]);
     }
 }
 
-module.exports = Zillow;
+export default Zillow;

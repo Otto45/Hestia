@@ -1,26 +1,23 @@
-// abstract class
-class Scraper {
-    constructor({ browser, userAgent, headers, homeInfoRepositoryBase, humanSimulator }) {
-        // private
-        this._browser = browser;
-        this._userAgent = userAgent;
-        this._headers = headers;
-        this._homeInfoRepositoryBase = homeInfoRepositoryBase;
+import { Browser, Page } from "puppeteer";
+import HomeInfoRepositoryBase from "../Repository Layer/home-info-repository-base";
+import HumanSimulator from "../Util/human-simulator";
 
-        // protected
-        this._humanSimulator = humanSimulator;
-    }
+abstract class Scraper {
+    
+    constructor(
+        private _browser: Browser,
+        private _userAgent: string,
+        private _headers: Record<string, string>,
+        private _homeInfoRepositoryBase: HomeInfoRepositoryBase,
+        protected humanSimulator: HumanSimulator) { }
 
-    // protected fields
-    _nextPageQuerySelector;
-    _homeInfo = [];
+    protected nextPageQuerySelector: string = '';
+    protected homeInfo: any = [];
 
-    // abstract protected methods
-    async _scrapeHomeInfoFromPage(page) { }
-    async _navigateToNextPage(page) { }
+    abstract async _scrapeHomeInfoFromPage(page: Page): Promise<boolean>;
+    abstract async _navigateToNextPage(page: Page): Promise<void>;
 
-    // protected methods
-    async _createNewPage() {
+    protected async _createNewPage() {
         const page = await this._browser.newPage();
         await page.setUserAgent(this._userAgent);
         await page.setExtraHTTPHeaders(this._headers);
@@ -28,11 +25,10 @@ class Scraper {
         return page;
     }
 
-    async _searchForHomes(page) { } // Some scrapers will not need to override this,
-    // as a site's base URL can include the city (e.g. Zillow scrapers)
+    // Some scrapers will not need to override this, as a site's base URL can include the city (e.g. Zillow scrapers)
+    protected async _searchForHomes(page: Page): Promise<void> { }
 
-    // public methods
-    async searchForHomes(url) {
+    public async searchForHomes(url: string) {
         // TODO: Each unique website should really be scraped with its own docker container, running this code,
         // to ensure that browser cached data, leaked memory, zombie procs, etc. don't bleed into scrapers for other sites
 
@@ -49,8 +45,8 @@ class Scraper {
                 searchResultsHasNextPage = await this._scrapeHomeInfoFromPage(page);
             }
 
-            if (this._homeInfo.length > 0) {
-                this._homeInfoRepositoryBase.saveHomeInfo(this._homeInfo);
+            if (this.homeInfo.length > 0) {
+                this._homeInfoRepositoryBase.saveHomeInfo(this.homeInfo);
             }
         } catch(err) {
             // TODO: See if error was due to a recaptcha appearing, come up with retry plan for that case
@@ -60,4 +56,4 @@ class Scraper {
     }
 }
 
-module.exports = Scraper;
+export default Scraper;

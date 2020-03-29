@@ -6,4 +6,4 @@ class HomeInfoRepositoryBase {
     saveHomeInfo(homeInfo) { throw new NotImplementedError('saveHomeInfo abstract method needs to be implemented in a class derived from HomeInfoRepositoryBase.') }
 }
 
-module.exports = HomeInfoRepositoryBase;
+export default HomeInfoRepositoryBase;

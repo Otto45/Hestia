@@ -22,7 +22,7 @@ const HEADERS = {
 const container = awilix.createContainer();
 let browser;
 
-async function configureContainer() {
+export async function configureContainer() {
     browser = await puppeteer.launch({ headless: false, slowMo: 200 });
 
     container.register({
@@ -39,9 +39,7 @@ async function configureContainer() {
     return container;
 }
 
-async function disposeContainer() {
+export async function disposeContainer() {
     await container.dispose();
     await browser.close();
 }
-
-module.exports = { configureContainer, disposeContainer };

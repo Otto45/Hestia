@@ -1,8 +1,8 @@
 class NotImplementedError extends Error {
-    constructor(args){
-        super(args);
+    constructor(msg: string){
+        super(msg);
         this.name = "NotImplementedError"
     }
 }
 
-module.exports = NotImplementedError;
+export default NotImplementedError;
