@@ -1,11 +1,11 @@
-const awilix = require('awilix');
-const { asValue, asClass } = awilix;
-const puppeteer = require('puppeteer');
+import * as awilix from 'awilix';
+const { createContainer, asValue, asClass } = awilix;
+import { launch, Browser } from 'puppeteer';
 
-const HumanSimulator = require('../Util/human-simulator');
-const Zillow = require('../Scrapers/zillow');
-const HomeInfoRepositoryConsole = require('../Repository Layer/home-info-repository-console');
-const HomeInfoRepositoryMysql = require('../Repository Layer/home-info-repository-mysql');
+import HumanSimulator from '../Util/human-simulator';
+import Zillow from '../Scrapers/zillow';
+import HomeInfoRepositoryConsole from '../Repository Layer/home-info-repository-console';
+import HomeInfoRepositoryMysql from '../Repository Layer/home-info-repository-mysql';
 
 // TODO: Get many user agent strings and rotate them
 const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.0 Safari/537.36';
@@ -19,27 +19,29 @@ const HEADERS = {
     'sec-fetch-site': 'none'
 };
 
-const container = awilix.createContainer();
-let browser;
+export class ContainerConfiguration {
+    static container = createContainer();
+    static browser: Browser;
 
-export async function configureContainer() {
-    browser = await puppeteer.launch({ headless: false, slowMo: 200 });
-
-    container.register({
-        browser: asValue(browser),
-        userAgent: asValue(USER_AGENT),
-        headers: asValue(HEADERS),
-        humanSimulator: asClass(HumanSimulator).singleton(),
-        homeInfoRepositoryBase: process.env.NODE_ENV === 'production'
-            ? asClass(HomeInfoRepositoryMysql).singleton()
-            : asClass(HomeInfoRepositoryConsole).singleton(),
-        zillow: asClass(Zillow)
-    });
-
-    return container;
-}
-
-export async function disposeContainer() {
-    await container.dispose();
-    await browser.close();
+    public static async create(): Promise<any> {
+        ContainerConfiguration.browser = await launch({ headless: false, slowMo: 200 });
+    
+        ContainerConfiguration.container.register({
+            browser: asValue(ContainerConfiguration.browser),
+            userAgent: asValue(USER_AGENT),
+            headers: asValue(HEADERS),
+            humanSimulator: asClass(HumanSimulator).singleton(),
+            homeInfoRepositoryBase: process.env.NODE_ENV === 'production'
+                ? asClass(HomeInfoRepositoryMysql).singleton()
+                : asClass(HomeInfoRepositoryConsole).singleton(),
+            zillow: asClass(Zillow)
+        });
+    
+        return ContainerConfiguration.container;
+    }
+    
+    public static async dispose(): Promise<void> {
+        await ContainerConfiguration.container.dispose();
+        await ContainerConfiguration.browser.close();
+    }
 }

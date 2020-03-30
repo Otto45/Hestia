@@ -1,31 +1,36 @@
 import Scraper from './scraper';
 import { Page } from 'puppeteer';
+import HomeInfo from '../home-info-placeholder';
+import { ArrayUtil } from '../Util/array-util';
 
 class Zillow extends Scraper {
 
     // protected fields
-    _nextPageQuerySelector = 'li.zsg-pagination-next > a';
+    private _nextPageQuerySelector = 'li.zsg-pagination-next > a';
 
     // overridden protected methods
-    async _scrapeHomeInfoFromPage(page: Page) {
+    protected async _scrapeHomeInfoFromPage(page: Page) {
         // NOTE: All code inside evaluate() executes in the browser, not Node.js
 
-        this.homeInfo.push(await page.evaluate(() => {
-            const homeInfo: any = [];
+        const homeInfoFromBrowser = await page.evaluate(() => {
+            const homeInfo: Array<HomeInfo> = [];
 
             const homeElements = document.querySelectorAll('article.list-card');
             homeElements.forEach(homeElement => {
                 const address = homeElement.querySelector('address.list-card-addr');
                 const price = homeElement.querySelector('div.list-card-price');
 
-                homeInfo.push({
-                    address: address.innerText,
-                    price: price.innerText
-                });
+                let newHomeInfo = new HomeInfo();
+                newHomeInfo.Address = address?.textContent ?? '';
+                newHomeInfo.Price = price?.textContent ?? '';
+
+                homeInfo.push(newHomeInfo);
             });
 
             return homeInfo;
-        }));
+        });
+
+        ArrayUtil.pushMany(this.homeInfo, homeInfoFromBrowser);
 
         // TODO: Need to perform some human like actions, to make it appear a person is looking through listings
         // This will take a lot more time to scrape every page, but hopefully will stop a recaptcha from appearing
@@ -35,7 +40,7 @@ class Zillow extends Scraper {
         return (await page.$(this._nextPageQuerySelector)) != null;
     }
 
-    async _navigateToNextPage(page: Page) {
+    protected async _navigateToNextPage(page: Page) {
         await Promise.all([
             page.waitForNavigation({ waitUntil: 'networkidle0' }),
             this.humanSimulator.clickElementOnPage(page, this._nextPageQuerySelector)

@@ -1,6 +1,7 @@
 import { Browser, Page } from "puppeteer";
 import HomeInfoRepositoryBase from "../Repository Layer/home-info-repository-base";
 import HumanSimulator from "../Util/human-simulator";
+import HomeInfo from "../home-info-placeholder";
 
 abstract class Scraper {
     
@@ -11,13 +12,12 @@ abstract class Scraper {
         private _homeInfoRepositoryBase: HomeInfoRepositoryBase,
         protected humanSimulator: HumanSimulator) { }
 
-    protected nextPageQuerySelector: string = '';
-    protected homeInfo: any = [];
+    protected homeInfo: Array<HomeInfo> = [];
 
-    abstract async _scrapeHomeInfoFromPage(page: Page): Promise<boolean>;
-    abstract async _navigateToNextPage(page: Page): Promise<void>;
+    protected abstract async _scrapeHomeInfoFromPage(page: Page): Promise<boolean>;
+    protected abstract async _navigateToNextPage(page: Page): Promise<void>;
 
-    protected async _createNewPage() {
+    protected async _createNewPage(): Promise<Page> {
         const page = await this._browser.newPage();
         await page.setUserAgent(this._userAgent);
         await page.setExtraHTTPHeaders(this._headers);
@@ -28,7 +28,7 @@ abstract class Scraper {
     // Some scrapers will not need to override this, as a site's base URL can include the city (e.g. Zillow scrapers)
     protected async _searchForHomes(page: Page): Promise<void> { }
 
-    public async searchForHomes(url: string) {
+    public async searchForHomes(url: string): Promise<void> {
         // TODO: Each unique website should really be scraped with its own docker container, running this code,
         // to ensure that browser cached data, leaked memory, zombie procs, etc. don't bleed into scrapers for other sites
 

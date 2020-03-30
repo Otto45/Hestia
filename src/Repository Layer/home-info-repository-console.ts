@@ -1,8 +1,10 @@
-const HomeInfoRepositoryBase = require('./home-info-repository-base');
+import HomeInfo from "../home-info-placeholder";
+import HomeInfoRepositoryBase from './home-info-repository-base';
 
 class HomeInfoRepositoryConsole extends HomeInfoRepositoryBase {
+
     // public overridden methods
-    saveHomeInfo(homeInfo) {
+    public saveHomeInfo(homeInfo: Array<HomeInfo>) {
         console.log(JSON.stringify(homeInfo));
     }
 }

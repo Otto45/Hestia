@@ -1,9 +1,8 @@
-const NotImplementedError = require('../Custom Errors/NotImplementedError');
+import HomeInfo from '../home-info-placeholder';
 
-// abstract class
-class HomeInfoRepositoryBase {
-    // abstract public methods
-    saveHomeInfo(homeInfo) { throw new NotImplementedError('saveHomeInfo abstract method needs to be implemented in a class derived from HomeInfoRepositoryBase.') }
+abstract class HomeInfoRepositoryBase {
+    
+    public abstract saveHomeInfo(homeInfo: Array<HomeInfo>): void;
 }
 
 export default HomeInfoRepositoryBase;
