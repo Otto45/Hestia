@@ -11,8 +11,9 @@
   "author": "Austin Ottinger",
   "license": "GNU GPLv3",
   "dependencies": {
-    "awilix": "^4.2.5",
-    "puppeteer": "^2.1.1"
+    "inversify": "^5.0.1",
+    "puppeteer": "^2.1.1",
+    "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
     "@types/glob": "^7.1.1",

@@ -4,7 +4,9 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceFolder}/app.js",
+            "program": "${workspaceFolder}/src/app.ts",
+            "preLaunchTask": "tsc",
+            "outFiles": ["${workspaceFolder}/dist/**/*.js"],
             "skipFiles": [
                 "<node_internals>/**"
             ]

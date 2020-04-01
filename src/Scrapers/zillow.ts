@@ -1,11 +1,21 @@
 import Scraper from './scraper';
-import { Page } from 'puppeteer';
+import { injectable } from 'inversify';
+import { Page, Browser } from 'puppeteer';
 import HomeInfo from '../home-info-placeholder';
-import { ArrayUtil } from '../Util/array-util';
+import ArrayUtil from '../Util/array-util';
+import HomeInfoRepositoryBase from '../Repository Layer/home-info-repository-base';
+import HumanSimulator from '../Util/human-simulator';
 
-class Zillow extends Scraper {
+@injectable()
+export default class Zillow extends Scraper {
 
-    // protected fields
+    constructor(
+        _browser: Browser,
+        _homeInfoRepositoryBase: HomeInfoRepositoryBase,
+        private _humanSimulator: HumanSimulator) {
+            super(_browser, _homeInfoRepositoryBase);
+        }
+
     private _nextPageQuerySelector = 'li.zsg-pagination-next > a';
 
     // overridden protected methods
@@ -43,9 +53,7 @@ class Zillow extends Scraper {
     protected async _navigateToNextPage(page: Page) {
         await Promise.all([
             page.waitForNavigation({ waitUntil: 'networkidle0' }),
-            this.humanSimulator.clickElementOnPage(page, this._nextPageQuerySelector)
+            this._humanSimulator.clickElementOnPage(page, this._nextPageQuerySelector)
         ]);
     }
 }
-
-export default Zillow;

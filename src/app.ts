@@ -1,4 +1,5 @@
-import { ContainerConfiguration } from './Dependency Injection/container-config';
+import 'reflect-metadata'; // This has to be imported globally for Inversify to work
+import IocContainer from './Dependency Injection/ioc-container';
 import scraperRegistry from './scraper-registry';
 import Scraper from './Scrapers/scraper';
 
@@ -6,7 +7,7 @@ import Scraper from './Scrapers/scraper';
 
 (async () => {
     try {
-        var container = await ContainerConfiguration.create();
+        var container = await IocContainer.create();
         const scraperPromises: Array<Promise<void>> = [];
 
         for (let [url, scraperType] of Object.entries(scraperRegistry)) {
@@ -16,7 +17,7 @@ import Scraper from './Scrapers/scraper';
 
         await Promise.all(scraperPromises);
 
-        await ContainerConfiguration.dispose();
+        await IocContainer.dispose();
 
     } catch (err) {
         console.log(err);
