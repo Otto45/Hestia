@@ -1,21 +1,57 @@
-import { Container } from 'inversify';
-import { launch, Browser } from 'puppeteer';
+import { Container, interfaces,  } from 'inversify';
+import { launch } from 'puppeteer';
 
 import HumanSimulator from '../Util/human-simulator';
 import Zillow from '../Scrapers/zillow';
 import HomeInfoRepositoryConsole from '../Repository Layer/home-info-repository-console';
 import HomeInfoRepositoryMysql from '../Repository Layer/home-info-repository-mysql';
+import HomeInfoRepositoryBase from '../Repository Layer/home-info-repository-base';
+import Scraper from '../Scrapers/scraper';
 
-export default class IocContainerFactory {
+type Provider<T> = () => Promise<T>;
 
-    public static async createIocContainer(): Promise<any> {
+const TYPES = {
+    zillowProvider: 'ZillowProvider',
+    zillow: 'zillow'
+}
+
+export class IocContainerWrapper {
+
+    private container: Container = this.createIocContainer();
+
+    private createIocContainer(): Container {
         const container = new Container();
 
-        // TODO: create a provider (async factory) in order to bind browser object, as it must be created asyncly
+        container.bind(HumanSimulator).toSelf().inSingletonScope();
 
-        container.bind<Zillow>(Zillow).toSelf();
-        container.bind<HumanSimulator>(HumanSimulator).toSelf().inSingletonScope();
-    
+        if (process.env.NODE_ENV === 'production') {
+            container
+                .bind(HomeInfoRepositoryBase)
+                .to(HomeInfoRepositoryMysql)
+                .inSingletonScope();
+        } else {
+            container
+                .bind(HomeInfoRepositoryBase)
+                .to(HomeInfoRepositoryConsole)
+                .inSingletonScope();
+        }
+
+        container.bind<Provider<Zillow>>(TYPES.zillowProvider).toProvider<Zillow>((context) => {
+            return () => {
+                return async () => {
+                    const browser = await launch({ headless: false, slowMo: 200 });
+                    const homeInfoRepository = context.container.get<HomeInfoRepositoryBase>(HomeInfoRepositoryBase);
+                    const humanSimulator = context.container.get<HumanSimulator>(HumanSimulator);
+
+                    return new Zillow(browser, homeInfoRepository, humanSimulator);
+                }
+            }
+        });
+
         return container;
+    }
+
+    public async get<T extends Scraper>(serviceIdentifier: interfaces.ServiceIdentifier<T>): Promise<T> {
+        const provider = this.container.resolve(Provider<T>);
     }
 }
