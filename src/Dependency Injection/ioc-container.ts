@@ -1,27 +1,22 @@
-import { Container, interfaces,  } from 'inversify';
-import { launch } from 'puppeteer';
+import { Container,  } from 'inversify';
 
 import HumanSimulator from '../Util/human-simulator';
 import Zillow from '../Scrapers/zillow';
 import HomeInfoRepositoryConsole from '../Repository Layer/home-info-repository-console';
 import HomeInfoRepositoryMysql from '../Repository Layer/home-info-repository-mysql';
 import HomeInfoRepositoryBase from '../Repository Layer/home-info-repository-base';
-import Scraper from '../Scrapers/scraper';
+import BrowserWrapper from '../Util/browser-wrapper';
 
-type Provider<T> = () => Promise<T>;
-
-const TYPES = {
-    zillowProvider: 'ZillowProvider',
-    zillow: 'zillow'
+export const TYPES = {
+    zillow: 'Zillow'
 }
 
-export class IocContainerWrapper {
+export class IocContainerConfiguration {
 
-    private container: Container = this.createIocContainer();
+    public static configureContainer(): Container {
+        let container = new Container();
 
-    private createIocContainer(): Container {
-        const container = new Container();
-
+        // Singleton
         container.bind(HumanSimulator).toSelf().inSingletonScope();
 
         if (process.env.NODE_ENV === 'production') {
@@ -36,22 +31,11 @@ export class IocContainerWrapper {
                 .inSingletonScope();
         }
 
-        container.bind<Provider<Zillow>>(TYPES.zillowProvider).toProvider<Zillow>((context) => {
-            return () => {
-                return async () => {
-                    const browser = await launch({ headless: false, slowMo: 200 });
-                    const homeInfoRepository = context.container.get<HomeInfoRepositoryBase>(HomeInfoRepositoryBase);
-                    const humanSimulator = context.container.get<HumanSimulator>(HumanSimulator);
+        // Transient
+        container.bind(BrowserWrapper).toSelf();
+        container.bind<Zillow>(TYPES.zillow).to(Zillow);
 
-                    return new Zillow(browser, homeInfoRepository, humanSimulator);
-                }
-            }
-        });
 
         return container;
-    }
-
-    public async get<T extends Scraper>(serviceIdentifier: interfaces.ServiceIdentifier<T>): Promise<T> {
-        const provider = this.container.resolve(Provider<T>);
     }
 }

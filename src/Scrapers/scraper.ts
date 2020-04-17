@@ -1,12 +1,14 @@
-import { Browser, Page } from "puppeteer";
+import { Page } from "puppeteer";
 import HomeInfoRepositoryBase from "../Repository Layer/home-info-repository-base";
-import HumanSimulator from "../Util/human-simulator";
 import HomeInfo from "../home-info-placeholder";
+import BrowserWrapper from "../Util/browser-wrapper";
+import { injectable } from "inversify";
 
+@injectable()
 export default abstract class Scraper {
     
     constructor(
-        private _browser: Browser,
+        private _browser: BrowserWrapper,
         private _homeInfoRepositoryBase: HomeInfoRepositoryBase) { }
 
     protected homeInfo: Array<HomeInfo> = [];
