@@ -1,7 +1,6 @@
 import Scraper from './scraper';
 import { injectable } from 'inversify';
 import { Page } from 'puppeteer';
-import HomeInfo from '../home-info-placeholder';
 import ArrayUtil from '../Util/array-util';
 import HomeInfoRepositoryBase from '../Repository Layer/home-info-repository-base';
 import HumanSimulator from '../Util/human-simulator';

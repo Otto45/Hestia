@@ -1,4 +1,4 @@
-import { Container,  } from 'inversify';
+import { Container } from 'inversify';
 
 import HumanSimulator from '../Util/human-simulator';
 import Zillow from '../Scrapers/zillow';
