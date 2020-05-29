@@ -3,11 +3,13 @@ import HomeInfoRepositoryBase from "../Repository Layer/home-info-repository-bas
 import HomeInfo from "../home-info-placeholder";
 import BrowserWrapper from "../Util/browser-wrapper";
 import { injectable } from "inversify";
+import LoggerBase from "../Util/Logger/logger-base";
 
 @injectable()
 export default abstract class Scraper {
     
     constructor(
+        private _logger: LoggerBase,
         private _browser: BrowserWrapper,
         private _homeInfoRepositoryBase: HomeInfoRepositoryBase) { }
 
@@ -60,7 +62,8 @@ export default abstract class Scraper {
         } catch(err) {
             // TODO: See if error was due to a recaptcha appearing, come up with retry plan for that case
             // Otherwise, throw error up call stack
-            console.log(err);
+            
+            throw err;
         }
     }
 }

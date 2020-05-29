@@ -6,6 +6,8 @@ import HomeInfoRepositoryConsole from '../Repository Layer/home-info-repository-
 import HomeInfoRepositoryMysql from '../Repository Layer/home-info-repository-mysql';
 import HomeInfoRepositoryBase from '../Repository Layer/home-info-repository-base';
 import BrowserWrapper from '../Util/browser-wrapper';
+import LoggerBase from '../Util/Logger/logger-base';
+import LoggerWinston from '../Util/Logger/logger-winston';
 
 export const TYPES = {
     zillow: 'Zillow'
@@ -18,6 +20,7 @@ export class IocContainerConfiguration {
 
         // Singleton
         container.bind(HumanSimulator).toSelf().inSingletonScope();
+        container.bind(LoggerBase).to(LoggerWinston).inSingletonScope();
 
         if (process.env.NODE_ENV === 'production') {
             container

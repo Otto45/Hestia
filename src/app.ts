@@ -2,12 +2,15 @@ import 'reflect-metadata'; // This has to be imported globally for Inversify to 
 import { IocContainerConfiguration } from './Dependency Injection/ioc-container';
 import scraperRegistry from './scraper-registry';
 import Scraper from './Scrapers/scraper';
+import LoggerBase from './Util/Logger/logger-base';
 
 // TODO: Dockerize this app
 
+const container = IocContainerConfiguration.configureContainer();
+
 (async () => {
     try {
-        var container = IocContainerConfiguration.configureContainer();
+        
         const scraperPromises: Array<Promise<void>> = [];
 
         for (let [url, scraperType] of Object.entries(scraperRegistry)) {
@@ -19,6 +22,6 @@ import Scraper from './Scrapers/scraper';
 
     } catch (err) {
         console.log(err);
-        // TODO: Implement app level logger to be injected
+        container.get(LoggerBase).error(JSON.stringify(err));
     }
 })();

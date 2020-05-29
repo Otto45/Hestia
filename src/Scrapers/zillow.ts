@@ -5,15 +5,17 @@ import ArrayUtil from '../Util/array-util';
 import HomeInfoRepositoryBase from '../Repository Layer/home-info-repository-base';
 import HumanSimulator from '../Util/human-simulator';
 import BrowserWrapper from '../Util/browser-wrapper';
+import LoggerBase from '../Util/Logger/logger-base';
 
 @injectable()
 export default class Zillow extends Scraper {
 
     constructor(
+        _logger: LoggerBase,
         _browser: BrowserWrapper,
         _homeInfoRepositoryBase: HomeInfoRepositoryBase,
         private _humanSimulator: HumanSimulator) {
-            super(_browser, _homeInfoRepositoryBase);
+            super(_logger, _browser, _homeInfoRepositoryBase);
         }
 
     // overridden protected methods
