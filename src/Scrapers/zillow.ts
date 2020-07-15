@@ -11,7 +11,7 @@ import LoggerBase from '../Util/Logger/logger-base';
 export default class Zillow extends Scraper {
 
     constructor(
-        _logger: LoggerBase,
+        protected _logger: LoggerBase,
         _browser: BrowserWrapper,
         _homeInfoRepositoryBase: HomeInfoRepositoryBase,
         private _humanSimulator: HumanSimulator) {
@@ -49,11 +49,11 @@ export default class Zillow extends Scraper {
         // E.g. Use methods on puppeteer page object to scroll page if scrollable, and maybe navigate to random home detail pages
         // with a delay before closing, to simulate looking at them
 
-        return (await this.getNextPageLink()) !== '';
+        return (await this.getNextPageLink(page)) !== '';
     }
 
     protected async _navigateToNextPage(page: Page) {
-        const nextPageLink = await this.getNextPageLink();
+        const nextPageLink = await this.getNextPageLink(page);
 
         await Promise.all([
             page.waitForNavigation({ waitUntil: 'networkidle0' }),
@@ -61,9 +61,21 @@ export default class Zillow extends Scraper {
         ]);
     }
 
-    private async getNextPageLink(): Promise<string> {
-        // TODO: Find and return the next page link
+    private async getNextPageLink(page: Page): Promise<string> {
+        const nextPageAnchorTagElementQuerySelector = 'div.search-pagination > nav > ul > li:last-child > a';
+
+        const nextPageAnchorTagElement = await page.$(nextPageAnchorTagElementQuerySelector);
+
+        if (nextPageAnchorTagElement === null) {
+            return '';
+        }
         
-        return '';
+        const isNextPageAnchorTagDisabled = await nextPageAnchorTagElement.evaluate(node => node.hasAttribute('disabled'));
+
+        if (isNextPageAnchorTagDisabled) {
+            return '';
+        }
+
+        return nextPageAnchorTagElementQuerySelector;
     }
 }

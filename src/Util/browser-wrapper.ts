@@ -17,4 +17,12 @@ export default class BrowserWrapper {
 
         return await this._browser.newPage();
     }
+
+    public async close(): Promise<void> {
+        if (this._browser === null || this._browser === undefined){
+            return;
+        }
+
+        await this._browser.close();
+    }
 }

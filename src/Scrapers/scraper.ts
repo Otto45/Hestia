@@ -9,7 +9,7 @@ import LoggerBase from "../Util/Logger/logger-base";
 export default abstract class Scraper {
     
     constructor(
-        private _logger: LoggerBase,
+        protected _logger: LoggerBase,
         private _browser: BrowserWrapper,
         private _homeInfoRepositoryBase: HomeInfoRepositoryBase) { }
 
@@ -64,6 +64,9 @@ export default abstract class Scraper {
             // Otherwise, throw error up call stack
             
             throw err;
+        } finally {
+            // Will handle closing the browser connection for any concrete webscraper
+            this._browser.close();
         }
     }
 }
