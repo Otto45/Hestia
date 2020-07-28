@@ -11,15 +11,15 @@
   "author": "Austin Ottinger",
   "license": "GNU GPLv3",
   "dependencies": {
+    "@types/glob": "^7.1.1",
+    "@types/node": "^13.9.5",
+    "@types/puppeteer": "^2.0.1",
     "inversify": "^5.0.1",
     "puppeteer": "^2.1.1",
     "reflect-metadata": "^0.1.13",
     "winston": "^3.2.1"
   },
   "devDependencies": {
-    "@types/glob": "^7.1.1",
-    "@types/node": "^13.9.5",
-    "@types/puppeteer": "^2.0.1",
     "typescript": "^3.8.3"
   }
 }
