@@ -2,7 +2,7 @@ import { Browser, Page, launch, LaunchOptions } from "puppeteer";
 import { injectable } from "inversify";
 
 const LAUNCH_OPTIONS: LaunchOptions = {
-    headless: false,
+    headless: true,
     slowMo: 200
 }
 
