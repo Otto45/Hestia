@@ -4,8 +4,6 @@ import scraperRegistry from './scraper-registry';
 import Scraper from './Scrapers/scraper';
 import LoggerBase from './Util/Logger/logger-base';
 
-// TODO: Dockerize this app
-
 const container = IocContainerConfiguration.configureContainer();
 
 (async () => {

@@ -1,8 +1,14 @@
 import { Browser, Page, launch, LaunchOptions } from "puppeteer";
 import { injectable } from "inversify";
 
-const LAUNCH_OPTIONS: LaunchOptions = {
+const LAUNCH_OPTIONS_DEV: LaunchOptions = {
+    headless: false,
+    slowMo: 200
+}
+
+const LAUNCH_OPTIONS_PROD: LaunchOptions = {
     headless: true,
+    args: ['--disable-gpu', '--disable-dev-shm-usage'],
     slowMo: 200
 }
 
@@ -12,7 +18,7 @@ export default class BrowserWrapper {
 
     public async newPage(): Promise<Page> {
         if (this._browser === null || this._browser === undefined) {
-            this._browser = await launch(LAUNCH_OPTIONS);
+            this._browser = await launch(process.env.NODE_ENV === 'production' ? LAUNCH_OPTIONS_PROD : LAUNCH_OPTIONS_DEV);
         }
 
         return await this._browser.newPage();
