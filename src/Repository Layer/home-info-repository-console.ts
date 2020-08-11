@@ -12,7 +12,7 @@ export default class HomeInfoRepositoryConsole extends HomeInfoRepositoryBase {
     }
 
     // public overridden methods
-    public saveHomeInfo(homeInfo: Array<HomeInfo>) {
-        this._logger.info(JSON.stringify(homeInfo));
+    public async saveHomeInfo(homeInfo: Array<HomeInfo>): Promise<void> {
+        Promise.resolve(() => this._logger.info(JSON.stringify(homeInfo)));
     }
 }

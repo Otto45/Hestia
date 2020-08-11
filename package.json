@@ -14,7 +14,9 @@
     "@types/glob": "^7.1.1",
     "@types/node": "^13.9.5",
     "@types/puppeteer": "^2.0.1",
+    "dotenv": "^8.2.0",
     "inversify": "^5.0.1",
+    "mssql": "^6.2.1",
     "puppeteer": "^2.1.1",
     "reflect-metadata": "^0.1.13",
     "winston": "^3.2.1"

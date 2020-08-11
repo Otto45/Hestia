@@ -3,6 +3,7 @@ import { injectable } from 'inversify';
 
 @injectable()
 export default abstract class HomeInfoRepositoryBase {
-    
-    public abstract saveHomeInfo(homeInfo: Array<HomeInfo>): void;
+
+    public abstract async saveHomeInfo(homeInfo: Array<HomeInfo>): Promise<void>;
+
 }

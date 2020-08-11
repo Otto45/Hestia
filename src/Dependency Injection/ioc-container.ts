@@ -1,4 +1,5 @@
 import { Container } from 'inversify';
+import Configuration from '../config';
 
 import HumanSimulator from '../Util/human-simulator';
 import Zillow from '../Scrapers/zillow';
@@ -8,6 +9,8 @@ import HomeInfoRepositoryBase from '../Repository Layer/home-info-repository-bas
 import BrowserWrapper from '../Util/browser-wrapper';
 import LoggerBase from '../Util/Logger/logger-base';
 import LoggerWinston from '../Util/Logger/logger-winston';
+import HomeInfoDataBase from '../Data Layer/home-info-data-base';
+import HomeInfoDataSqlServer from '../Data Layer/home-info-data-sqlserver';
 
 export const TYPES = {
     zillow: 'Zillow'
@@ -21,8 +24,9 @@ export class IocContainerConfiguration {
         // Singleton
         container.bind(HumanSimulator).toSelf().inSingletonScope();
         container.bind(LoggerBase).to(LoggerWinston).inSingletonScope();
+        container.bind(HomeInfoDataBase).to(HomeInfoDataSqlServer).inSingletonScope();
 
-        if (process.env.NODE_ENV === 'production') {
+        if (Configuration.NodeEnv === 'production') {
             container
                 .bind(HomeInfoRepositoryBase)
                 .to(HomeInfoRepositoryMysql)
