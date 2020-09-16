@@ -12,6 +12,7 @@
   "license": "GNU GPLv3",
   "dependencies": {
     "@types/glob": "^7.1.1",
+    "@types/mssql": "^6.0.4",
     "@types/node": "^13.9.5",
     "@types/puppeteer": "^2.0.1",
     "dotenv": "^8.2.0",

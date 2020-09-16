@@ -1,7 +1,7 @@
 CREATE DATABASE Hestia
 GO
 
-USING Hestia
+USE Hestia
 GO
 
 CREATE TABLE HomeInfo (
@@ -29,9 +29,20 @@ RETURNS @HomeInfoTvp TABLE
 )
 AS
 BEGIN
-    
-    -- TODO: Create TVP from colon delimited list of column values
-        
+    DECLARE
+    @ColonDelimitedList NVARCHAR(MAX) = @ColonDelimitedListOfColumns,
+    @AddressFromList NVARCHAR(60),
+    @PriceFromList NVARCHAR(10),
+    @PrevStringLen INT
+
+    SELECT @AddressFromList = SUBSTRING(@ColonDelimitedList, 1, CHARINDEX(':', @ColonDelimitedList) - 1)
+
+    SELECT @PrevStringLen = LEN(@AddressFromList)
+    SELECT @ColonDelimitedList = SUBSTRING(@ColonDelimitedList, CHARINDEX(':', @ColonDelimitedList) + 1, LEN(@ColonDelimitedList) - @PrevStringLen + 1)
+
+    SELECT @PriceFromList = @ColonDelimitedList
+
+    INSERT INTO @HomeInfoTvp ([Address], [Price]) VALUES (TRIM(@AddressFromList), TRIM(@PriceFromList))
     RETURN
 END
 GO
@@ -43,9 +54,9 @@ AS
 
     DECLARE
         @HomeInfoRowsCursor CURSOR,
-        @ColonDelimitedListOfColumns NVARCHAR(61)
+        @ColonDelimitedListOfColumns NVARCHAR(61)  -- Size of all individual columns, plus ':' characters
 
-    IF @HomeInfoList IS NOT NULL
+    IF @SemicolonDelimitedHomeInfoList IS NOT NULL
     BEGIN
         SET @HomeInfoRowsCursor = CURSOR FOR SELECT VALUE FROM string_split(@SemicolonDelimitedHomeInfoList, ';') WHERE RTRIM(VALUE) <> ''
         OPEN @HomeInfoRowsCursor
@@ -54,9 +65,9 @@ AS
         WHILE @@FETCH_STATUS = 0
         BEGIN
 
-        INSERT INTO HomeInfo ([Address], [Price]) SELECT [Address], [Price] FROM CreateHomeInfoTvpFromColonDelimitedList(@ColonDelimitedListOfColumns)
+            INSERT INTO HomeInfo ([Address], [Price]) SELECT [Address], [Price] FROM CreateHomeInfoTvpFromColonDelimitedList(@ColonDelimitedListOfColumns)
         
-        FETCH NEXT FROM @HomeInfoRowsCursor INTO @ColonDelimitedListOfColumns
+            FETCH NEXT FROM @HomeInfoRowsCursor INTO @ColonDelimitedListOfColumns
         END
 
         CLOSE @HomeInfoRowsCursor
