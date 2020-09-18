@@ -4,7 +4,7 @@ import Configuration from '../config';
 import HumanSimulator from '../Util/human-simulator';
 import Zillow from '../Scrapers/zillow';
 import HomeInfoRepositoryConsole from '../Repository Layer/home-info-repository-console';
-import HomeInfoRepositoryMysql from '../Repository Layer/home-info-repository-mysql';
+import HomeInfoRepositorySqlServer from '../Repository Layer/home-info-repository-sqlserver';
 import HomeInfoRepositoryBase from '../Repository Layer/home-info-repository-base';
 import BrowserWrapper from '../Util/browser-wrapper';
 import LoggerBase from '../Util/Logger/logger-base';
@@ -29,7 +29,7 @@ export class IocContainerConfiguration {
         if (Configuration.NodeEnv === 'production') {
             container
                 .bind(HomeInfoRepositoryBase)
-                .to(HomeInfoRepositoryMysql)
+                .to(HomeInfoRepositorySqlServer)
                 .inSingletonScope();
         } else {
             container

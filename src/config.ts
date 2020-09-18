@@ -9,7 +9,8 @@ const {
     SQL_PORT,
     SQL_DATABASE,
     SQL_USER,
-    SQL_PASSWORD
+    SQL_PASSWORD,
+    LOG_LEVEL
  } = process.env;
 
  assert( SQL_SERVER, "SQL_SERVER configuration is required." );
@@ -25,4 +26,5 @@ export default class Configuration {
     public static SqlDatabase: string = SQL_DATABASE as string;
     public static SqlUser: string = SQL_USER as string;
     public static SqlPassword: string = SQL_PASSWORD as string;
+    public static LogLevel: string = (LOG_LEVEL !== null && LOG_LEVEL !== undefined) ? LOG_LEVEL : 'warn';
 }

@@ -1,6 +1,6 @@
 import { Page } from "puppeteer";
 import HomeInfoRepositoryBase from "../Repository Layer/home-info-repository-base";
-import HomeInfo from "../home-info-placeholder";
+import HomeInfo from "./Dto/home-info-placeholder";
 import BrowserWrapper from "../Util/browser-wrapper";
 import { injectable } from "inversify";
 import LoggerBase from "../Util/Logger/logger-base";

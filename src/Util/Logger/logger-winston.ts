@@ -1,12 +1,13 @@
 import { injectable } from "inversify";
 import LoggerBase from "./logger-base";
 import * as winston from "winston";
+import Configuration from "../../config";
 
 @injectable()
 export default class LoggerWinston extends LoggerBase {
 
     private logger = winston.createLogger({
-        level: process.env.LOG_LEVEL
+        level: Configuration.LogLevel
     });
 
     public error(message: string): void {

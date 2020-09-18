@@ -1,6 +1,4 @@
-class HomeInfo {
+export default class HomeInfo {
     public Address: string = '';
     public Price: string = '';
 }
-
-export default HomeInfo;

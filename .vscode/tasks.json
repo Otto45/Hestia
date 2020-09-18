@@ -5,7 +5,7 @@
             "type": "shell",
             "label": "tsc",
             "command": "node",
-            "args": ["${workspaceFolder}\\node_modules\\typescript\\bin\\tsc"],
+            "args": ["${workspaceFolder}/node_modules/typescript/bin/tsc"],
             "presentation": {
                 "echo": true,
                 "reveal": "silent",

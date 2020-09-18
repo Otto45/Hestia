@@ -1,5 +1,5 @@
 import HomeInfoDataBase from "./home-info-data-base";
-import HomeInfo from "../home-info-placeholder";
+import HomeInfo from "../Scrapers/Dto/home-info-placeholder";
 import Configuration from "../config";
 import { injectable } from "inversify";
 import { ConnectionPool, config, NVarChar } from "mssql";
