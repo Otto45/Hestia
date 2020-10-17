@@ -1,4 +1,4 @@
-import HomeInfo from "../Scrapers/Dto/home-info-placeholder";
+import HomeInfo from "../Scrapers/Dto/home-info";
 import HomeInfoRepositoryBase from './home-info-repository-base';
 import { injectable, inject } from "inversify";
 import LoggerBase from "../Util/Logger/logger-base";
@@ -13,6 +13,6 @@ export default class HomeInfoRepositoryConsole extends HomeInfoRepositoryBase {
 
     // public overridden methods
     public async saveHomeInfo(homeInfo: Array<HomeInfo>): Promise<void> {
-        Promise.resolve(() => this._logger.info(JSON.stringify(homeInfo)));
+        this._logger.info(JSON.stringify(homeInfo));
     }
 }

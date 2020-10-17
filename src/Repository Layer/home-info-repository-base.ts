@@ -1,4 +1,4 @@
-import HomeInfo from '../Scrapers/Dto/home-info-placeholder';
+import HomeInfo from '../Scrapers/Dto/home-info';
 import { injectable } from 'inversify';
 
 @injectable()

@@ -7,25 +7,29 @@ GO
 CREATE TABLE HomeInfo (
     [Id] int PRIMARY KEY IDENTITY,
     [Address] NVARCHAR(60) NOT NULL,
-    [Price] NVARCHAR(10) NOT NULL
+    [Price] NVARCHAR(10) NOT NULL,
+    [ScrapedDate] DATETIME NOT NULL
 )
 GO
 
 CREATE TYPE HomeInfoTvp AS TABLE
 (
     [Address] NVARCHAR(60) NOT NULL,
-    [Price] NVARCHAR(10) NOT NULL
+    [Price] NVARCHAR(10) NOT NULL,
+    [ScrapedDate] DATETIME NOT NULL
 )
 GO
 
 CREATE FUNCTION CreateHomeInfoTvpFromColonDelimitedList
 (
-    @ColonDelimitedListOfColumns NVARCHAR(MAX)
+    @ColonDelimitedListOfColumns NVARCHAR(MAX),
+    @CurrentDateTime DATETIME
 )
 RETURNS @HomeInfoTvp TABLE
 (
     [Address] NVARCHAR(60) NOT NULL,
-    [Price] NVARCHAR(10) NOT NULL
+    [Price] NVARCHAR(10) NOT NULL,
+    [ScrapedDate] DATETIME NOT NULL
 )
 AS
 BEGIN
@@ -42,7 +46,7 @@ BEGIN
 
     SELECT @PriceFromList = @ColonDelimitedList
 
-    INSERT INTO @HomeInfoTvp ([Address], [Price]) VALUES (TRIM(@AddressFromList), TRIM(@PriceFromList))
+    INSERT INTO @HomeInfoTvp ([Address], [Price], [ScrapedDate]) VALUES (TRIM(@AddressFromList), TRIM(@PriceFromList), @CurrentDateTime)
     RETURN
 END
 GO
@@ -65,7 +69,7 @@ AS
         WHILE @@FETCH_STATUS = 0
         BEGIN
 
-            INSERT INTO HomeInfo ([Address], [Price]) SELECT [Address], [Price] FROM CreateHomeInfoTvpFromColonDelimitedList(@ColonDelimitedListOfColumns)
+            INSERT INTO HomeInfo ([Address], [Price], [ScrapedDate]) SELECT [Address], [Price], [ScrapedDate] FROM CreateHomeInfoTvpFromColonDelimitedList(@ColonDelimitedListOfColumns, GETUTCDATE())
         
             FETCH NEXT FROM @HomeInfoRowsCursor INTO @ColonDelimitedListOfColumns
         END

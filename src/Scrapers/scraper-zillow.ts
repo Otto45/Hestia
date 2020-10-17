@@ -1,4 +1,4 @@
-import Scraper from './scraper';
+import ScraperBase from './scraper-base';
 import { injectable } from 'inversify';
 import { Page } from 'puppeteer';
 import ArrayUtil from '../Util/array-util';
@@ -8,7 +8,7 @@ import BrowserWrapper from '../Util/browser-wrapper';
 import LoggerBase from '../Util/Logger/logger-base';
 
 @injectable()
-export default class Zillow extends Scraper {
+export default class ZillowScraper extends ScraperBase {
 
     constructor(
         protected _logger: LoggerBase,

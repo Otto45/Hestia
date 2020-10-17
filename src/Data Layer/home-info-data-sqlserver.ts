@@ -1,11 +1,16 @@
 import HomeInfoDataBase from "./home-info-data-base";
-import HomeInfo from "../Scrapers/Dto/home-info-placeholder";
+import HomeInfo from "../Scrapers/Dto/home-info";
 import Configuration from "../config";
-import { injectable } from "inversify";
+import { injectable, inject } from "inversify";
 import { ConnectionPool, config, NVarChar } from "mssql";
+import LoggerBase from "../Util/Logger/logger-base";
 
 @injectable()
 export default class HomeInfoDataSqlServer extends HomeInfoDataBase {
+
+    constructor(@inject(LoggerBase) private _logger: LoggerBase ) {
+        super();
+    }
 
     private _config: config = {
         server: Configuration.SqlServer,
@@ -16,13 +21,24 @@ export default class HomeInfoDataSqlServer extends HomeInfoDataBase {
     };
 
     public async saveHomeInfo(homeInfo: Array<HomeInfo>): Promise<void> {
-        let pool = new ConnectionPool(this._config);
+        const pool: ConnectionPool = new ConnectionPool(this._config);
 
-        await pool.request()
-            .input('@SemicolonDelimitedHomeInfoList', NVarChar, this.serializeHomeInfoForStoredProcedure(homeInfo))
+        try{
+            await pool.connect();
+
+            await pool.request()
+            .input('SemicolonDelimitedHomeInfoList', NVarChar, this.serializeHomeInfoForStoredProcedure(homeInfo))
             .execute('dbo.InsertHomeInfoList');
 
-        await pool.close();
+        } catch(err) {
+
+            this._logger.error(err);
+
+        } finally {
+            if (pool !== null && pool !== undefined && pool.connected) {
+                await pool.close();
+            }
+        }        
     }
 
     private serializeHomeInfoForStoredProcedure(homeInfo: Array<HomeInfo>): string {

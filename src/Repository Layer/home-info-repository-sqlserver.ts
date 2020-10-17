@@ -1,4 +1,4 @@
-import HomeInfo from "../Scrapers/Dto/home-info-placeholder";
+import HomeInfo from "../Scrapers/Dto/home-info";
 import HomeInfoRepositoryBase from './home-info-repository-base';
 import { injectable, inject } from "inversify";
 import HomeInfoDataBase from "../Data Layer/home-info-data-base";

@@ -1,7 +1,7 @@
 import 'reflect-metadata'; // This has to be imported globally for Inversify to work
 import { IocContainerConfiguration } from './Dependency Injection/ioc-container';
 import scraperRegistry from './scraper-registry';
-import Scraper from './Scrapers/scraper';
+import ScraperBase from './Scrapers/scraper-base';
 import LoggerBase from './Util/Logger/logger-base';
 
 const container = IocContainerConfiguration.configureContainer();
@@ -12,14 +12,13 @@ const container = IocContainerConfiguration.configureContainer();
         const scraperPromises: Array<Promise<void>> = [];
 
         for (let [url, scraperType] of Object.entries(scraperRegistry)) {
-            const scraper = container.get(scraperType) as Scraper;
+            const scraper = container.get(scraperType) as ScraperBase;
             scraperPromises.push(scraper.searchForHomes(url));
         }
 
         await Promise.all(scraperPromises);
 
     } catch (err) {
-        console.log(err);
-        container.get(LoggerBase).error(JSON.stringify(err));
+        container.get(LoggerBase).error(err);
     }
 })();
