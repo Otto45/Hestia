@@ -38,5 +38,9 @@ COPY --from=TypscriptTranspiler /app/dist .
 
 # Run everything after as non-privileged user.
 USER pptruser
+
 ENV NODE_ENV production
+ENV SQL_DATABASE Hestia
+ENV SQL_ENCRYPT false
+
 CMD node ./app.js
